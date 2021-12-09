@@ -1,6 +1,6 @@
-test
 class Board:
 
+    wins = None
     board = None
     taken = None
     size = 0
@@ -12,6 +12,7 @@ class Board:
             self.board.append(temp)
         self.taken = [None] * (size * size)
         self.size = size
+        self.wins = [[1,2,3],[4,5,6],[7,8,9],[1,4,7],[2,5,8],[3,6,9],[1,5,9],[3,5,7]]
 
     def printBoard(self):
         for i in range(self.size):
@@ -34,12 +35,33 @@ class Board:
         else:
             row = index//self.size
         col = index % self.size - 1
-        if(self.board[row][col] != "-"):
-            self.printBoard()
-            newIndex = int(input("This position is taken. Input another: "))
-            self.put(newIndex, value)
-        else:
-            self.board[row][col] = value
+        self.board[row][col] = value
+    def playerMove(self):
+        value = int(input("Choose a square (1-9): "))
+        while self.taken[value]:
+            value = int(input("Invalid square (1-9): "))
+        self.put(value, "X")
+        self.taken[value] = "X"
+
+    def aiMove(self):
+        temp = 0
+        while not self.taken[temp]:
+            temp += 1
+        self.put(temp, "O")
+        self.taken[temp] = "O"
+
+    def hasWin(self,letter):
+        hasWin = False
+        array = []
+        for value in self.taken:
+            if(value == letter):
+                array.append(self.taken.index(value))
+        
+        for trio in self.wins:
+            if set(trio).issubset(set(array)):
+                hasWin = True
+        return hasWin
+
 
 board = Board(3)
 
@@ -48,6 +70,15 @@ print("4 5 6")
 print("7 8 9")
 
 while not board.isFull():
-    value = int(input("Choose a position: "))
-    board.put(value, "X")
+    board.printBoard()
+    board.playerMove()
+    if(board.hasWin("X")):
+        print("You won!")
+        break
+    board.printBoard()
+    board.aiMove()
+    if(board.hasWin("O")):
+        print("AI won!")
+        break
+    
 
