@@ -1,3 +1,4 @@
+test
 class Board:
 
     board = None
@@ -49,4 +50,4 @@ print("7 8 9")
 while not board.isFull():
     value = int(input("Choose a position: "))
     board.put(value, "X")
-    
+
