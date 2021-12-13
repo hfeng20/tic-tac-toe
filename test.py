@@ -51,15 +51,23 @@ class Board:
         self.put(temp + 1, "O")
 
     def hasWin(self,letter):
-        hasWin = False
+        hasWin = 1
         array = []
         for value in self.taken:
             if(value == letter):
                 array.append(self.taken.index(value) + 1)
         
         for trio in self.wins:
-            if set(trio).issubset(set(array)):
-                hasWin = True
+            print(trio)
+            print(array)
+            if trio[0] in array and trio[1] in array and trio[2] in array:
+                hasWin = 2
+        tie = True
+        for i in range(len(self.taken)):
+            if self.taken[i] == None:
+                tie = False
+        if tie:
+            hasWin = 0
         return hasWin
 
 
@@ -72,13 +80,16 @@ print("7 8 9")
 while not board.isFull():
     board.printBoard()
     board.playerMove()
-    if(board.hasWin("X")):
+    if(board.hasWin("X") == 0):
+        print("Tie!")
+        break
+    elif(board.hasWin("X") == 2):
         print("You won!")
         break
     board.aiMove()
-    if(board.hasWin("O")):
+    if(board.hasWin("O") == 2):
         print("AI won!")
         break
-    print(board.taken)
-    
-
+    elif(board.hasWin("O") == 0):
+        print("Tie!")
+        break
