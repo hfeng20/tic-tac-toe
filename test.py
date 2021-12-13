@@ -16,8 +16,7 @@ class Board:
 
     def printBoard(self):
         for i in range(self.size):
-            for t in range(self.size):
-                print(self.board[i][t]," ")
+            print(self.board[i]," ")
 
     def isFull(self):
         for i in range(0, self.size):
@@ -32,30 +31,31 @@ class Board:
         row = None
         if(index % self.size == 0):
             row = index//self.size - 1
+            col = self.size - 1
         else:
             row = index//self.size
-        col = index % self.size - 1
+            col = index % self.size - 1
         self.board[row][col] = value
+        self.taken[index - 1] = True
+
     def playerMove(self):
         value = int(input("Choose a square (1-9): "))
-        while self.taken[value]:
+        while self.taken[value - 1]:
             value = int(input("Invalid square (1-9): "))
         self.put(value, "X")
-        self.taken[value] = "X"
 
     def aiMove(self):
         temp = 0
-        while not self.taken[temp]:
+        while temp < len(self.taken) and self.taken[temp]:
             temp += 1
-        self.put(temp, "O")
-        self.taken[temp] = "O"
+        self.put(temp + 1, "O")
 
     def hasWin(self,letter):
         hasWin = False
         array = []
         for value in self.taken:
             if(value == letter):
-                array.append(self.taken.index(value))
+                array.append(self.taken.index(value) + 1)
         
         for trio in self.wins:
             if set(trio).issubset(set(array)):
@@ -75,10 +75,10 @@ while not board.isFull():
     if(board.hasWin("X")):
         print("You won!")
         break
-    board.printBoard()
     board.aiMove()
     if(board.hasWin("O")):
         print("AI won!")
         break
+    print(board.taken)
     
 
