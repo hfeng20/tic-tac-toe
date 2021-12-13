@@ -36,7 +36,7 @@ class Board:
             row = index//self.size
             col = index % self.size - 1
         self.board[row][col] = value
-        self.taken[index - 1] = True
+        self.taken[index - 1] = value
 
     def playerMove(self):
         value = int(input("Choose a square (1-9): "))
@@ -51,24 +51,22 @@ class Board:
         self.put(temp + 1, "O")
 
     def hasWin(self,letter):
-        hasWin = 1
         array = []
-        for value in self.taken:
-            if(value == letter):
-                array.append(self.taken.index(value) + 1)
-        
+        for i in range(len(self.taken)):
+            if(self.taken[i] == letter):
+                array.append(i + 1)
         for trio in self.wins:
             print(trio)
             print(array)
             if trio[0] in array and trio[1] in array and trio[2] in array:
-                hasWin = 2
+                return 2
         tie = True
         for i in range(len(self.taken)):
             if self.taken[i] == None:
                 tie = False
         if tie:
-            hasWin = 0
-        return hasWin
+            return 0
+        return 1
 
 
 board = Board(3)
