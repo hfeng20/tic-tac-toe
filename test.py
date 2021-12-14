@@ -44,12 +44,6 @@ class Board:
             value = int(input("Invalid square (1-9): "))
         self.put(value, "X")
 
-    def aiMove(self):
-        temp = 0
-        while temp < len(self.taken) and self.taken[temp]:
-            temp += 1
-        self.put(temp + 1, "O")
-
     def state(self,letter):
         array = self.positions(letter)
         for trio in self.wins:
@@ -87,9 +81,10 @@ class Board:
             opponent = "O"
             bestVal = -20
             for move in moves:
-                self.board.put(move, "X")
+                self.put(move, "X")
                 val = self.minimax(depth + 1, opponent)
-                self.board.put(move, "-")
+                self.put(move, "-")
+                self.taken[move - 1] = None
                 if val > bestVal:
                     bestVal = val
             return bestVal
@@ -97,14 +92,29 @@ class Board:
             opponent = "X"
             bestVal = 20
             for move in moves:
-                self.board.put(move, "O")
+                self.put(move, "O")
                 val = self.minimax(depth + 1, opponent)
-                self.board.put(move, "-")
+                self.put(move, "-")
+                self.taken[move - 1] = None
                 if val < bestVal:
                     bestVal = val
             return bestVal
 
-
+    def aiMove(self):
+        moves = self.positions(None)
+        print(moves)
+        bestVal = 20
+        bestMove = None
+        for move in moves:
+            self.put(move, "O")
+            value = self.minimax(0, "O")
+            print(value)
+            self.put(move, "-")
+            self.taken[move - 1] = None
+            if value < bestVal:
+                bestVal = value
+                bestMove = move
+        #self.put(bestMove, "O")
 
 board = Board(3)
 
