@@ -50,16 +50,20 @@ class Board:
             temp += 1
         self.put(temp + 1, "O")
 
-    def hasWin(self,letter):
-        array = []
-        for i in range(len(self.taken)):
-            if(self.taken[i] == letter):
-                array.append(i + 1)
+    def state(self,letter):
+        array = self.positions(letter)
         for trio in self.wins:
-            print(trio)
-            print(array)
             if trio[0] in array and trio[1] in array and trio[2] in array:
-                return 2
+                return 10
+        opponent = None
+        if letter == "X":
+            opponent = "O"
+        else:
+            opponent = "O"
+        array = self.positions(opponent)
+        for trio in self.wins:
+            if trio[0] in array and trio[1] in array and trio[2] in array:
+                return -10
         tie = True
         for i in range(len(self.taken)):
             if self.taken[i] == None:
@@ -68,6 +72,39 @@ class Board:
             return 0
         return 1
 
+    def positions(self, letter):
+        array = []
+        for i in range(len(self.taken)):
+            if(self.taken[i] == letter):
+                array.append(i + 1)
+        return array
+
+    def minimax(self, depth, player):
+        if self.state(player) != 0:
+            return self.state(player)
+        moves = self.positions("-")
+        if player == "X":
+            opponent = "O"
+            bestVal = -20
+            for move in moves:
+                self.board.put(move, "X")
+                val = self.minimax(depth + 1, opponent)
+                self.board.put(move, "-")
+                if val > bestVal:
+                    bestVal = val
+            return bestVal
+        else:
+            opponent = "X"
+            bestVal = 20
+            for move in moves:
+                self.board.put(move, "O")
+                val = self.minimax(depth + 1, opponent)
+                self.board.put(move, "-")
+                if val < bestVal:
+                    bestVal = val
+            return bestVal
+
+
 
 board = Board(3)
 
@@ -75,19 +112,19 @@ print("1 2 3")
 print("4 5 6")
 print("7 8 9")
 
-while not board.isFull():
+while True:
     board.printBoard()
     board.playerMove()
-    if(board.hasWin("X") == 0):
+    if(board.state("X") == 0):
         print("Tie!")
         break
-    elif(board.hasWin("X") == 2):
+    elif(board.state("X") == 10):
         print("You won!")
         break
     board.aiMove()
-    if(board.hasWin("O") == 2):
+    if(board.state("O") == 10):
         print("AI won!")
         break
-    elif(board.hasWin("O") == 0):
+    elif(board.state("O") == 0):
         print("Tie!")
         break
