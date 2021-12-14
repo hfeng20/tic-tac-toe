@@ -74,9 +74,11 @@ class Board:
         return array
 
     def minimax(self, depth, player):
-        if self.state(player) != 0:
+        if self.state(player) != 1:
+            if player == "O" and self.state(player) != 0:
+                return -1 * self.state(player)
             return self.state(player)
-        moves = self.positions("-")
+        moves = self.positions(None)
         if player == "X":
             opponent = "O"
             bestVal = -20
@@ -102,19 +104,17 @@ class Board:
 
     def aiMove(self):
         moves = self.positions(None)
-        print(moves)
         bestVal = 20
         bestMove = None
         for move in moves:
             self.put(move, "O")
-            value = self.minimax(0, "O")
-            print(value)
+            value = self.minimax(0, "X")
             self.put(move, "-")
             self.taken[move - 1] = None
             if value < bestVal:
                 bestVal = value
                 bestMove = move
-        #self.put(bestMove, "O")
+        self.put(bestMove, "O")
 
 board = Board(3)
 
